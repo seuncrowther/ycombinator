@@ -1,0 +1,69 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<link href="style.css" rel="stylesheet" />
+<title>YCombinator Demo</title>
+<script src = "https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script >
+	 $(document).ready(function() {
+		
+		   //$('.table-list').html("<h1>Loading...</h1>);
+
+		   $.ajax({
+			   url: "https://www.graphqlhub.com/graphql",
+			   contentType: "application/json",
+			   type:'POST',
+			   data: JSON.stringify({query:`{ hn2 { nodeFromHnId(id:"clayallsopp" isUserId:true) { ... on HackerNewsV2User { submitted(first: 30) { pageInfo { hasNextPage endCursor } edges { cursor node { id ... on HackerNewsV2Story {score url title descendants} ... on HackerNewsV2Comment { text } } } } } } }}`}),
+			   success: function(result) {
+				   //var result = JSON.parse( '['+ data +']' );	   
+				   //alert(result.data.hn2.nodeFromHnId.submitted.edges[0].node.title);
+
+				   for(var i = 0, len = result.data.hn2.nodeFromHnId.submitted.edges.length; i < len; i++) {
+					   var num = 1 + i;
+					   var temp = '<tr>';
+					   temp += '<td class="rank" width="18px" valign="top"><span class="rank">'+ num +'</span></td>';
+					   temp += '<td width="5px" valign="top"><div class="upvote"></div></td>';
+					   temp += '<td class="title" valign="top">';
+					   temp += '<a href="">'+ result.data.hn2.nodeFromHnId.submitted.edges[i].node.title +'</a> <span class="source">(npr.org)</span>';
+					   temp += '<span class="subtext">'+ result.data.hn2.nodeFromHnId.submitted.edges[i].node.score +' points by lgats 10 hours ago | hide | '+ result.data.hn2.nodeFromHnId.submitted.edges[i].node.descendants +' comments</span>';
+					   temp += '</td>';
+					   temp += '</tr>';
+
+					   $('.table-list').append(temp);
+					}
+			   },
+
+			   error: function(data){	
+				alert("Error!");
+			   }			   
+
+		   });
+	 });
+</script>
+</head>
+
+<body>
+	<div class="content">
+	<table width="100%" class="htable">
+		<tr>
+			<td width="18px" valign="center"><a class="logo-border" href=""><img src="img/y18.gif" /></a></td>
+			<td valign="center" class="reform">
+				<a href=""><b>Hacker News</b></a>
+				<a href="">new</a> | <a href="">past</a> | <a href="">comment</a> | <a href="">ask</a> | <a href="">show</a> | <a href="">jobs</a> | <a href="">submit</a>
+			</td>
+			<td width="50px" valign="center" class="reform">
+				<a href="">login</a>
+			</td>
+		</tr>
+	</table>
+	<div id="greetingDiv" ></div>	
+	<table width="100%" class="table-list">
+		<!---Insert feed here--->
+		
+		<!---Insert feed here--->
+	</table>
+		
+	</div>
+</body>
+</html>
